@@ -1,17 +1,17 @@
-import { useLoadScript } from '@react-google-maps/api';
+import { InfoWindow, useLoadScript } from '@react-google-maps/api';
 import { GoogleMap, Marker, MarkerClusterer } from '@react-google-maps/api';
 import mapStyles from './mapStyles';
 // import Map from '../../components/map/map'
 
 import '../../App.css';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 
 export default function MapView() {
     const [newMarkers, setNewMarkers] = useState([]);
     const [selectedMarker, setSelectedMarker] = useState(null);
 
 
-    const { isLoaded } = useLoadScript({
+    const { isLoaded, loadError } = useLoadScript({
       googleMapsApiKey: 'AIzaSyBdNq9njCHnPId5ilXIgn7LvnexfHImuWU',
     });
     const mapContainerStyle = {
@@ -39,6 +39,16 @@ export default function MapView() {
         },
       ]);
     }, []);
+
+    // make 'box' to save map instance
+    // const mapRef = useRef();
+    // return saved map instance on rerender
+    // const onMapLoad = useCallback((map) => {
+    //     mapRef.current = map;
+    // }, []);
+
+
+    if (loadError) return 'Error Loading Map'
     if (!isLoaded) return <p>Loading...</p>;
   
   return (
@@ -49,6 +59,7 @@ export default function MapView() {
         center={center}
         options={options}
         onClick={onMapClick}
+        // onLoad={onMapLoad}
       >
         {newMarkers.map((marker) => (
           <Marker
@@ -66,7 +77,14 @@ export default function MapView() {
             }}
           />
         ))}
-        
+        {selectedMarker ? (
+            <InfoWindow>
+                <div>
+                    <h3>Free Soup</h3>
+                    <p>Posted at </p>
+                </div>
+            </InfoWindow>
+        ) : null}
       </GoogleMap>
   )
 }
