@@ -3,7 +3,7 @@ import { GoogleMap, Marker, MarkerClusterer } from '@react-google-maps/api';
 import mapStyles from './mapStyles';
 
 import './App.css';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 export default function App() {
   const [markers, setMarkers] = useState([]);
 
@@ -21,7 +21,17 @@ export default function App() {
     zoomControl: true,
   };
 
-
+  const onMapClick = useCallback((event) => {
+    setMarkers(
+      (current) => [
+      ...current,
+      {
+        lat: event.latLng.lat(),
+        lng: event.latLng.lng(),
+        time: new Date(),
+      },
+    ]);
+  }, []);
   if (!isLoaded) return <p>Loading...</p>;
 
   return (
@@ -31,18 +41,7 @@ export default function App() {
         zoom={8}
         center={center}
         options={options}
-        onClick={(event) => {
-          console.log(event);
-          setMarkers(
-            (current) => [
-            ...current,
-            {
-              lat: event.latLng.lat(),
-              lng: event.latLng.lng(),
-              time: new Date(),
-            },
-          ]);
-        }}
+        onClick={onMapClick}
       >
         {markers.map((marker) => (
           <Marker
