@@ -41,12 +41,16 @@ export default function MapView() {
     }, []);
 
     // make 'box' to save map instance
-    // const mapRef = useRef();
+    const mapRef = useRef();
     // return saved map instance on rerender
-    // const onMapLoad = useCallback((map) => {
-    //     mapRef.current = map;
-    // }, []);
-
+    const onMapLoad = useCallback((map) => {
+        mapRef.current = map;
+    }, []);
+    // pans to given location once per mount
+    const panToLocation = useCallback(({lat, lng}) => {
+        mapRef.current.panToLocation({lat, lng});
+        mapRef.current.setZoom(13);
+    }, [])
 
     if (loadError) return 'Error Loading Map'
     if (!isLoaded) return <p>Loading...</p>;
