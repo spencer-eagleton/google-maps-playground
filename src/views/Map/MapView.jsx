@@ -78,11 +78,15 @@ export default function MapView() {
           />
         ))}
         {selectedMarker ? (
-            <InfoWindow>
-                <div>
-                    <h3>Free Soup</h3>
-                    <p>Posted at </p>
-                </div>
+            <InfoWindow 
+                position={{ lat: selectedMarker.lat, lng: selectedMarker.lng }}            
+                onCloseClick={() => {
+                    setSelectedMarker(null);
+                }}
+            >
+                    <div>
+                        <h3>Free Soup</h3>
+                    </div>
             </InfoWindow>
         ) : null}
       </GoogleMap>
