@@ -1,13 +1,10 @@
 import { InfoWindow, useLoadScript } from '@react-google-maps/api';
 import { GoogleMap, Marker, MarkerClusterer } from '@react-google-maps/api';
 import mapStyles from './mapStyles';
-import LocateUser from '../../components/LocateUser/LocateUser';
 // import Map from '../../components/map/map'
 
 import '../../App.css';
 import { useCallback, useMemo, useRef, useState } from 'react';
-
-
 
 export default function MapView() {
   const [newMarkers, setNewMarkers] = useState([]);
@@ -48,10 +45,37 @@ export default function MapView() {
     mapRef.current = map;
   }, []);
   // pans to given location once per mount
-  const panToLocation = useCallback(({ lat, lng }) => {
+  const panToLocation = ({ lat, lng }) => {
     mapRef.current.panToLocation({ lat, lng });
     mapRef.current.setZoom(13);
-  }, []);
+  }
+//   const panToLocation = useCallback(({ lat, lng }) => {
+//     mapRef.current.panToLocation({ lat, lng });
+//     mapRef.current.setZoom(13);
+//   }, []);
+
+  function LocateUser({ panToLocation }) {
+    return (
+      <button
+        className="locate"
+        onClick={() => {
+          navigator.geolocation.getCurrentPosition((position) => {
+            console.log(position)
+
+            // panToLocation({
+            //   lat: position.coords.latitude,
+            //   lng: position.coords.longitude,
+            // });
+          },
+          // empty function for failure condition
+            () => null
+          );
+        }}
+      >
+        Locate
+      </button>
+    );
+  }
 
   if (loadError) return 'Error Loading Map';
   if (!isLoaded) return <p>Loading...</p>;
@@ -59,41 +83,44 @@ export default function MapView() {
   return (
     //   <Map />
     <>
-            <LocateUser panToLocation={panToLocation} />
-            <GoogleMap
-                  mapContainerStyle={mapContainerStyle}
-                  zoom={11}
-                  center={center}
-                  options={options}
-                  onClick={onMapClick}
-              >
-              {newMarkers.map((marker) => (
-                  <Marker
-                      key={marker.time}
-                      position={{ lat: marker.lat, lng: marker.lng }}
-                      icon={{
-                          url: './assets/soup.png',
-                          scaledSize: new window.google.maps.Size(30, 30),
-                          origin: new window.google.maps.Point(0, 0),
-                          anchor: new window.google.maps.Point(15, 15),
-                      }}
-                      onClick={() => {
-                          setSelectedMarker(marker);
-                          console.log(selectedMarker);
-                      } } />
-              ))}
-              {selectedMarker ? (
-                  <InfoWindow
-                      position={{ lat: selectedMarker.lat, lng: selectedMarker.lng }}
-                      onCloseClick={() => {
-                          setSelectedMarker(null);
-                      } }
-                  >
-                      <div>
-                          <h3>Free Soup</h3>
-                      </div>
-                  </InfoWindow>
-              ) : null}
-          </GoogleMap></>
+      <LocateUser panToLocation={panToLocation}/>
+      <GoogleMap
+        mapContainerStyle={mapContainerStyle}
+        zoom={11}
+        center={center}
+        options={options}
+        onClick={onMapClick}
+        onLoad={onMapLoad}
+      >
+        {newMarkers.map((marker) => (
+          <Marker
+            key={marker.time}
+            position={{ lat: marker.lat, lng: marker.lng }}
+            icon={{
+              url: './assets/soup.png',
+              scaledSize: new window.google.maps.Size(30, 30),
+              origin: new window.google.maps.Point(0, 0),
+              anchor: new window.google.maps.Point(15, 15),
+            }}
+            onClick={() => {
+              setSelectedMarker(marker);
+              console.log(selectedMarker);
+            }}
+          />
+        ))}
+        {selectedMarker ? (
+          <InfoWindow
+            position={{ lat: selectedMarker.lat, lng: selectedMarker.lng }}
+            onCloseClick={() => {
+              setSelectedMarker(null);
+            }}
+          >
+            <div>
+              <h3>Free Soup</h3>
+            </div>
+          </InfoWindow>
+        ) : null}
+      </GoogleMap>
+    </>
   );
 }
