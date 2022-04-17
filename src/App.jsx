@@ -21,9 +21,7 @@ export default function App() {
     zoomControl: true,
   };
 
-  const map = useMemo(() => {
-    
-  })
+
   if (!isLoaded) return <p>Loading...</p>;
 
   return (
