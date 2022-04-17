@@ -1,23 +1,25 @@
 body {
-    width: 100%;
+    width: 100vw;
     height: 100vh;
 }
 
 #root{
-    width: 100%;
+    width: 100vw;
     height: 100vh;
+    margin-left: 0px;
+    
 }
 .container {
-    width: 100%;
+    width: 100vw;
     height: 100vh;
   }
 
 .map-container {
-    width: 100%;
+    width: 100vw;
     height: 100vh;
 }
 
 .map {
-    width: 100%;
+    width: 100vw;
     height: 100vh;
 }

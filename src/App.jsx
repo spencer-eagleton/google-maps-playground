@@ -1,44 +1,56 @@
-import { useLoadScript } from '@react-google-maps/api';
-import { GoogleMap, Marker, MarkerClusterer } from '@react-google-maps/api';
-import mapStyles from './mapStyles';
+// import { useLoadScript } from '@react-google-maps/api';
+// import { GoogleMap, Marker, MarkerClusterer } from '@react-google-maps/api';
+// import mapStyles from './mapStyles';
 
-import './App.css';
-import { useCallback, useMemo, useState } from 'react';
+import Header from "./components/Header/Header";
+import MapView from "./views/Map/MapView";
+
+// import './App.css';
+// import { useCallback, useMemo, useState } from 'react';
 export default function App() {
-  const [markers, setMarkers] = useState([]);
+  // const [markers, setMarkers] = useState([]);
 
-  const { isLoaded } = useLoadScript({
-    googleMapsApiKey: 'AIzaSyBdNq9njCHnPId5ilXIgn7LvnexfHImuWU',
-  });
-  const mapContainerStyle = {
-    width: '100vw',
-    height: '100vh',
-  };
-  const center = { lat: 45.51223, lng: -122.658722 };
-  const options = {
-    styles: mapStyles,
-    disableDefaultUI: true,
-    zoomControl: true,
-  };
+  // const { isLoaded } = useLoadScript({
+  //   googleMapsApiKey: 'AIzaSyBdNq9njCHnPId5ilXIgn7LvnexfHImuWU',
+  // });
+  // const mapContainerStyle = {
+  //   width: '100vw',
+  //   height: '100vh',
+  // };
+  // const center = { lat: 45.51223, lng: -122.658722 };
+  // const options = {
+  //   styles: mapStyles,
+  //   disableDefaultUI: true,
+  //   zoomControl: true,
+  // };
 
-  const onMapClick = useCallback((event) => {
-    setMarkers(
-      (current) => [
-      ...current,
-      {
-        lat: event.latLng.lat(),
-        lng: event.latLng.lng(),
-        time: new Date(),
-      },
-    ]);
-  }, []);
-  if (!isLoaded) return <p>Loading...</p>;
+  // const onMapClick = useCallback((event) => {
+  //   setMarkers(
+  //     (current) => [
+  //     ...current,
+  //     {
+  //       lat: event.latLng.lat(),
+  //       lng: event.latLng.lng(),
+  //       time: new Date(),
+  //     },
+  //   ]);
+  // }, []);
+  // if (!isLoaded) return <p>Loading...</p>;
 
   return (
-    <div>
-      <GoogleMap
+      
+      <>
+        <MapView />
+        <Header />
+      </>
+      
+   
+  );
+}
+
+{/* <GoogleMap
         mapContainerStyle={mapContainerStyle}
-        zoom={8}
+        zoom={11}
         center={center}
         options={options}
         onClick={onMapClick}
@@ -55,7 +67,4 @@ export default function App() {
             }}
           />
         ))}
-      </GoogleMap>
-    </div>
-  );
-}
+      </GoogleMap> */}
