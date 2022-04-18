@@ -9,6 +9,7 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 export default function MapView() {
   const [newMarkers, setNewMarkers] = useState([]);
   const [selectedMarker, setSelectedMarker] = useState(null);
+  const [mapCenter, setMapCenter] = useState({ lat: 45.51223, lng: -122.658722 })
 
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: 'AIzaSyBdNq9njCHnPId5ilXIgn7LvnexfHImuWU',
@@ -19,7 +20,8 @@ export default function MapView() {
   };
 
   // retain position during rerender
-  const center = useMemo(() => ({ lat: 45.51223, lng: -122.658722 }), []);
+  const center = 
+  useMemo(() => (mapCenter), [mapCenter]);
   const options = {
     styles: mapStyles,
     disableDefaultUI: true,
@@ -28,6 +30,7 @@ export default function MapView() {
 
   // no dependancy in useCallback prevents rerender
   const onMapClick = useCallback((event) => {
+      //keep added markers with spread
     setNewMarkers((current) => [
       ...current,
       {
@@ -61,6 +64,9 @@ export default function MapView() {
         onClick={() => {
           navigator.geolocation.getCurrentPosition((position) => {
             console.log(position)
+            const { latitude, longitude } = position.coords;
+            console.log({ latitude, longitude })
+            setMapCenter({ lat: latitude, lng: longitude })
 
             // panToLocation({
             //   lat: position.coords.latitude,
