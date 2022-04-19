@@ -1,8 +1,20 @@
 import { InfoWindow, useLoadScript } from '@react-google-maps/api';
 import { GoogleMap, Marker, MarkerClusterer } from '@react-google-maps/api';
 import mapStyles from './mapStyles';
-import usePlacesAutocomplete, { getGeocode, getLatLng } from 'use-places-autocomplete';
+import usePlacesAutocomplete, {
+  getGeocode,
+  getLatLng,
+} from 'use-places-autocomplete';
 
+import {
+  Combobox,
+  ComboboxInput,
+  ComboboxPopover,
+  ComboboxList,
+  ComboboxOption,
+  ComboboxOptionText,
+} from '@reach/combobox';
+import '@reach/combobox/styles.css';
 
 import '../../App.css';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -14,9 +26,10 @@ export default function MapView() {
     lat: 45.51223,
     lng: -122.658722,
   });
-
+  const libraries= ["places"]
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: 'AIzaSyBdNq9njCHnPId5ilXIgn7LvnexfHImuWU',
+    libraries,
   });
 
   const mapContainerStyle = {
@@ -32,6 +45,20 @@ export default function MapView() {
     zoomControl: true,
   };
 
+  async function getCoords() {
+    const resp = await fetch('https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=AIzaSyB_CW_olHj572sQ6AURzEjfzrFK2bhz5J8');
+    const data = await resp.json();
+    console.log(data)
+  }
+
+  useEffect(() => {
+    const fetchCoords = async () => {
+      const data = await getCoords();
+      console.log(data)
+    };
+    fetchCoords();
+  }, [])
+
   // no dependancy in useCallback prevents rerender
   const onMapClick = useCallback((event) => {
     //keep added markers with spread
@@ -45,9 +72,9 @@ export default function MapView() {
     ]);
   }, []);
 
-  // make 'box' to save map instance
+  // make 'box' to retain map instance state
   const mapRef = useRef();
-  // // return saved map instance on rerender
+  // // return saved map instance on load
   const onMapLoad = useCallback((map) => {
     mapRef.current = map;
   }, []);
@@ -88,16 +115,47 @@ export default function MapView() {
     );
   }
 
+  function Search() {
+    const {
+      ready,
+      value,
+      suggestions: { status, data },
+      setValue,
+      clearSuggestions,
+    } = usePlacesAutocomplete({
+      requestOptions: {
+        location: {
+          lat: () => 45.51223,
+          lng: () => -122.658722,
+        },
+        radius: 200 * 1000,
+      },
+    });
+
+    return (
+      <Combobox onSelect={() => console.log(address)}>
+        <ComboboxInput
+          value={value}
+          onChange={(e) => {
+            setValue(e.target.value);
+          }}
+          disabled={!ready}
+          placeholder="enter an address"
+        ></ComboboxInput>
+      </Combobox>
+    );
+  }
+
   useEffect(() => {
     async function codeAdress() {
       const address = '12214 SE 1st St, Vancouver, WA';
       try {
         const results = await getGeocode({ address });
-            console.log(results[0]);
-      } catch(error) {
-        console.log('error')
+        console.log(results[0]);
+      } catch (error) {
+        console.log('error');
       }
-    };
+    }
     codeAdress();
   }, []);
 
@@ -108,13 +166,14 @@ export default function MapView() {
     //   <Map />
     <>
       <LocateUser panToLocation={panToLocation} />
+      <Search />
       <GoogleMap
         mapContainerStyle={mapContainerStyle}
         zoom={11}
         center={center}
         options={options}
         onClick={onMapClick}
-        onLoad={mapCenter => setMapCenter(mapCenter)}
+        onLoad={(mapCenter) => setMapCenter(mapCenter)}
       >
         {newMarkers.map((marker) => (
           <Marker

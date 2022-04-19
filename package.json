@@ -68,9 +68,11 @@
   },
   "dependencies": {
     "@googlemaps/react-wrapper": "^1.1.31",
+    "@reach/combobox": "^0.16.5",
     "@react-google-maps/api": "^2.8.1",
     "google-geocoder": "^0.2.1",
     "googlemaps": "^1.12.0",
+    "node-geocoder": "^4.0.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "use-places-autocomplete": "^2.0.0"
