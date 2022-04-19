@@ -28,7 +28,7 @@ export default function MapView() {
   });
   const libraries= ["places"]
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: 'AIzaSyBdNq9njCHnPId5ilXIgn7LvnexfHImuWU',
+    googleMapsApiKey: 'AIzaSyB_CW_olHj572sQ6AURzEjfzrFK2bhz5J8',
     libraries,
   });
 
@@ -133,7 +133,8 @@ export default function MapView() {
     });
 
     return (
-      <Combobox onSelect={() => console.log(address)}>
+      <div className="search">
+      <Combobox onSelect={(address) => console.log(address)}>
         <ComboboxInput
           value={value}
           onChange={(e) => {
@@ -142,22 +143,27 @@ export default function MapView() {
           disabled={!ready}
           placeholder="enter an address"
         ></ComboboxInput>
-      </Combobox>
+        <ComboboxPopover>
+          {status === 'OK' && data.map(({id, description}) => (
+            <ComboboxOption key={id} value={description} />
+          ))}
+        </ComboboxPopover>
+      </Combobox></div>
     );
   }
 
-  useEffect(() => {
-    async function codeAdress() {
-      const address = '12214 SE 1st St, Vancouver, WA';
-      try {
-        const results = await getGeocode({ address });
-        console.log(results[0]);
-      } catch (error) {
-        console.log('error');
-      }
-    }
-    codeAdress();
-  }, []);
+  // useEffect(() => {
+  //   async function codeAdress() {
+  //     const address = '12214 SE 1st St, Vancouver, WA';
+  //     try {
+  //       const results = await getGeocode({ address });
+  //       console.log(results[0]);
+  //     } catch (error) {
+  //       console.log('error');
+  //     }
+  //   }
+  //   codeAdress();
+  // }, []);
 
   if (loadError) return 'Error Loading Map';
   if (!isLoaded) return <p>Loading...</p>;
