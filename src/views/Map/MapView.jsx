@@ -26,7 +26,7 @@ export default function MapView() {
     lat: 45.51223,
     lng: -122.658722,
   });
-  const libraries= ["places"]
+  const libraries = ['places'];
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: 'AIzaSyB_CW_olHj572sQ6AURzEjfzrFK2bhz5J8',
     libraries,
@@ -46,18 +46,20 @@ export default function MapView() {
   };
 
   async function getCoords() {
-    const resp = await fetch('https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=AIzaSyB_CW_olHj572sQ6AURzEjfzrFK2bhz5J8');
+    const resp = await fetch(
+      'https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=AIzaSyB_CW_olHj572sQ6AURzEjfzrFK2bhz5J8'
+    );
     const data = await resp.json();
-    console.log(data)
+    console.log(data);
   }
 
   useEffect(() => {
     const fetchCoords = async () => {
       const data = await getCoords();
-      console.log(data)
+      console.log(data);
     };
     fetchCoords();
-  }, [])
+  }, []);
 
   // no dependancy in useCallback prevents rerender
   const onMapClick = useCallback((event) => {
@@ -134,21 +136,35 @@ export default function MapView() {
 
     return (
       <div className="search">
-      <Combobox onSelect={(address) => console.log(address)}>
-        <ComboboxInput
-          value={value}
-          onChange={(e) => {
-            setValue(e.target.value);
+        <Combobox
+          onSelect={async (address) => {
+            try {
+              const results = await getGeocode({ address });
+              const { lat, lng } = await getLatLng(results[0]);
+              console.log({ lat, lng });
+            } catch (error) {
+              console.log('error');
+            }
+
+            console.log(address);
           }}
-          disabled={!ready}
-          placeholder="enter an address"
-        ></ComboboxInput>
-        <ComboboxPopover>
-          {status === 'OK' && data.map(({id, description}) => (
-            <ComboboxOption key={id} value={description} />
-          ))}
-        </ComboboxPopover>
-      </Combobox></div>
+        >
+          <ComboboxInput
+            value={value}
+            onChange={(e) => {
+              setValue(e.target.value);
+            }}
+            disabled={!ready}
+            placeholder="enter an address"
+          ></ComboboxInput>
+          <ComboboxPopover>
+            {status === 'OK' &&
+              data.map(({ id, description }) => (
+                <ComboboxOption key={id} value={description} />
+              ))}
+          </ComboboxPopover>
+        </Combobox>
+      </div>
     );
   }
 
